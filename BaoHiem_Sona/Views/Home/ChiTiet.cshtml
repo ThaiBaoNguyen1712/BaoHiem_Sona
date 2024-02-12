@@ -1,0 +1,23 @@
+﻿@model BaoHiem_Sona.Models.ThongBao
+
+@{
+    ViewBag.Title = Model.TieuDe;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="divmain mb-3">
+            <div class="bgtitle">@Model.TieuDe</div>
+        </div>
+    </div>
+</div>
+        @Html.Raw(Model.NoiDung)
+
+<hr />
+<button class="btn btn-danger" onclick="back()" id="closeBtn"> Đóng </button>
+<script>
+    function back() {
+        window.history.back();
+    }
+</script>

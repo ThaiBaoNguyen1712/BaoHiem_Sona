@@ -1,0 +1,228 @@
+﻿@model IEnumerable<BaoHiem_Sona.Models.Lop>
+
+@{
+    ViewBag.Title = "Danh sách sinh viên";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="divmain" style="margin-bottom: 20px">
+    <div class="bgtitle">Danh sách sinh viên</div>
+    <form action="~/Admin/DanhSachSV/Index" method="Post">
+        <div class="row" style="margin:auto">
+            <div class="col-md-3">
+                <label for="NamHocDropdown">Năm học:</label>
+                @Html.DropDownList("NamHoc", ViewData["NamHoc"] as SelectList, "---Chọn năm học---", new { @class = "form-control text-center", @id = "NamHocDropdown" })
+            </div>
+
+            <div class="col-md-3">
+                <label for="KhoaDropdown">Khoa:</label>
+                @Html.DropDownList("Khoa_ID", ViewData["Khoa"] as SelectList, "---Chọn Khoa---", new { @class = "form-control text-center", @id = "KhoaDropdown" })
+            </div>
+            <div class="col-md-3">
+                <label for="LopDropdown">Lớp:</label>
+                @Html.DropDownList("Lop_ID", ViewData["Lop"] as SelectList, "---Chọn Lớp---", new { @class = "form-control text-center", @id = "LopDropdown" })
+            </div>
+            <div class="col" style="margin-left:25px; display: flex; align-items: flex-end;">
+                <button class="btn-primary" type="submit" style="padding:10px; border-radius:5px; margin-top:15px">Tìm kiếm</button>
+                <div class="dropdown" style="padding-top:10px;margin-left:30px">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" style="padding:10px">
+                        <i class="bi bi-gear-fill"></i>  Tùy chọn
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" style="margin-right:15px">
+                     
+                        <li><a href="#" data-toggle="modal" data-target="#ModalExcel"><i class="bi bi-file-earmark-arrow-down"></i> Xuất ra excel</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+    </form>
+
+    <br />
+    <table class="table table-bordered text-center table-hover" style="padding-top:30px">
+        <thead>
+            <tr class="bg-warning">
+                <th class="text-center">STT</th>
+                <th class="text-center">Tên lớp</th>
+                <th class="text-center">Tên khoa</th>
+                <th class="text-center">Niên khóa</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{int i = 1;}
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@i</td>
+                    <td>@item.TenLop</td>
+                    <td>@item.Khoa.TenKhoa</td>
+                    <td>@Convert.ToDateTime(item.NamBatDau).ToString("yyyy") - @Convert.ToDateTime(item.NamKetThuc).ToString("yyyy")</td>
+                    <td>
+                        <a href="~/Admin/DanhSachSV/DSSV/@item.ID">[Danh sách SV]</a>
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+</div>
+
+<div id="ModalExcel" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <form action="~/Admin/DanhSachSV/ExportToExcel" method="post">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Xuất file theo danh sách niên khóa/Khoa/Lớp</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="margin:auto">
+                        <div class="col-md-4">
+                            <label for="NamHocDropdown">Năm học:</label>
+                            @Html.DropDownList("NamHoc", ViewData["NamHoc"] as SelectList, "---Chọn năm học---", new { @class = "form-control text-center", @id = "NamHocDropdown2" })
+                        </div>
+                        <div class="col-md-4">
+                            <label for="KhoaDropdown">Khoa:</label>
+                            @Html.DropDownList("ID_Khoa", ViewData["Khoa"] as SelectList, "---Chọn Khoa---", new { @class = "form-control text-center", @id = "KhoaDropdown2" })
+                        </div>
+                        <div class="col-md-4">
+                            <label for="LopDropdown">Lớp:</label>
+                            @Html.DropDownList("ID", ViewData["Lop"] as SelectList, "---Chọn Lớp---", new { @class = "form-control text-center", @id = "LopDropdown2" })
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success" id="CreateKhoa">Xuất file</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+          $("#KhoaDropdown").change(function () {
+                var selectedKhoa = $(this).val();
+                var selectedNamHoc = $("#NamHocDropdown").val();
+
+                var dataToSend = { selectedKhoa: selectedKhoa };
+
+                // Nếu selectedNamHoc có giá trị, thêm dữ liệu năm học vào dataToSend
+                if (selectedNamHoc) {
+                    dataToSend.startYear = selectedNamHoc.split('-')[0];
+                    dataToSend.endYear = selectedNamHoc.split('-')[1];
+                }
+
+                $.ajax({
+                    url: '@Url.Action("GetLopList_byKhoa")',
+                    type: 'POST',
+                    data: dataToSend,
+                    success: function (data) {
+                        // Cập nhật dropdownlist cho lớp
+                        $("#LopDropdown").empty();
+                        $.each(data, function (index, item) {
+                            $("#LopDropdown").append($('<option>', {
+                                value: item.Value,
+                                text: item.Text
+                            }));
+                        });
+                    }
+                });
+
+            });
+
+
+            $("#NamHocDropdown").change(function () {
+                var selectedKhoa = $("#KhoaDropdown").val();
+                var selectedNamHoc = $(this).val();
+
+                $.ajax({
+                    url: '@Url.Action("GetLopList_byNamHoc")',
+                    type: 'POST',
+                    data: { startYear: selectedNamHoc.split('-')[0], endYear: selectedNamHoc.split('-')[1], selectedKhoa: selectedKhoa },
+                    success: function (data) {
+                        // Cập nhật dropdownlist cho lớp
+                        $("#LopDropdown").empty();
+                        $.each(data, function (index, item) {
+                            $("#LopDropdown").append($('<option>', {
+                                value: item.Value,
+                                text: item.Text
+                            }));
+                        });
+                    }
+                });
+            });
+
+
+
+   // form Excel
+ $(document).ready(function () {
+    $("#KhoaDropdown2").change(function () {
+     var selectedKhoa = $(this).val();
+     var selectedNamHoc = $("#NamHocDropdown2").val();
+
+     var dataToSend = { selectedKhoa: selectedKhoa };
+
+     // Nếu selectedNamHoc có giá trị, thêm dữ liệu năm học vào dataToSend
+     if (selectedNamHoc) {
+         dataToSend.startYear = selectedNamHoc.split('-')[0];
+         dataToSend.endYear = selectedNamHoc.split('-')[1];
+     }
+
+     $.ajax({
+         url: '@Url.Action("GetLopList_byKhoa")',
+         type: 'POST',
+         data: dataToSend,
+         success: function (data) {
+
+                     $("#LopDropdown2").empty();
+        $("#LopDropdown2").append($('<option>', {
+            value: null,
+            text: '---Chọn lớp---'
+        }));
+                        $.each(data, function (index, item) {
+               $("#LopDropdown2").append($('<option>', {
+                   value: item.Value,
+                   text: item.Text
+               }));
+           });
+                 }
+             });
+         });
+
+
+         $("#NamHocDropdown2").change(function () {
+             var selectedKhoa = $("#KhoaDropdown2").val();
+             var selectedNamHoc = $(this).val();
+
+             $.ajax({
+                 url: '@Url.Action("GetLopList_byNamHoc")',
+                 type: 'POST',
+                 data: { startYear: selectedNamHoc.split('-')[0], endYear: selectedNamHoc.split('-')[1], selectedKhoa: selectedKhoa },
+                 success: function (data) {
+                     // Cập nhật dropdownlist cho lớp
+                     $("#LopDropdown2").empty();
+        $("#LopDropdown2").append($('<option>', {
+            value: null,
+            text: '---Chọn lớp---'
+        }));
+                      $.each(data, function (index, item) {
+             $("#LopDropdown2").append($('<option>', {
+                 value: item.Value,
+                 text: item.Text
+             }));
+         });
+                 }
+             });
+         });
+         });
+});
+</script>

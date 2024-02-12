@@ -1,0 +1,180 @@
+﻿@{
+    ViewBag.Title = "Tra cứu";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="bgtitle">Tra cứu mã thẻ</div>
+<div class="panel panel-default">
+    <div class="panel-heading" data-toggle="collapse" data-target="#Filter">
+        <div class="row" style="margin:auto">
+            <div class="col-md-8">
+                <p class="panel-title" style="color:black">
+                    Lọc thông tin theo
+                </p>
+            </div>
+            <div class="col pull-right">
+                <i class="bi bi-filter"></i>
+            </div>
+        </div>
+
+    </div>
+    <div id="Filter" class="panel-collapse">
+        <div class="panel-body">
+            <form method="post" action="~/Admin/TraCuu/TraCuuBaoHiem">
+                <div class="row" style="margin:auto">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="insuranceType">Loại Bảo hiểm:</label>
+                            <select class="form-control text-center" name="SelectedInsurance" id="SelectedInsurance">
+                                <option value="bhyt" selected>Bảo hiểm y tế</option>
+                                <option value="bhtn">Bảo hiểm tai nạn</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="LopDropdown">Tình trạng thẻ:</label>
+                        <select name="Status" class="form-control text-center">
+                            <option value="null">Tất cả</option>
+                            <option value="ConHan">Còn hạn</option>
+                            <option value="SapHet">Sắp hết hạn</option>
+                            <option value="HetHan">Hết hạn</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row" style="margin:auto">
+                    <div class="col-md-4">
+                        <label for="NamHocDropdown">Năm học:</label>
+                        @Html.DropDownList("NamHoc", ViewData["NamHoc"] as SelectList, "---Chọn năm học---", new { @class = "form-control text-center", @id = "NamHocDropdown" })
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="KhoaDropdown">Khoa:</label>
+                        @Html.DropDownList("Khoa_ID", ViewData["Khoa"] as SelectList, "---Chọn Khoa---", new { @class = "form-control text-center", @id = "KhoaDropdown" })
+                    </div>
+                    <div class="col-md-4">
+                        <label for="LopDropdown">Lớp:</label>
+                        @Html.DropDownList("Lop_ID", ViewData["Lop"] as SelectList, "---Chọn Lớp---", new { @class = "form-control text-center", @id = "LopDropdown" })
+                    </div>
+
+                </div>
+                <br />
+                <div class="row" style="margin:auto">
+                    <div class="col-md-6">
+                        <div class="col">  <button class="btn btn-default">Lọc</button></div>
+                    </div>
+                    <div class="col  pull-right">
+                        <button class="btn btn-success " style="margin-left:25px">Xuất ra Excel</button>
+                    </div>
+
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@if (ViewBag.BH != null)
+{
+    <div id="" class="table-responsive">
+        <table id="myTable" class="table table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>Họ và tên</th>
+                    <th>Ngày sinh</th>
+                    <th>CCCD</th>
+                    <th>SĐT</th>
+                    <th>Mã thẻ</th>
+                    <th>Tình trạng</th>
+                    <th>#</th>
+                </tr>
+            </thead>
+
+            @foreach (var item in ViewBag.BH)
+            {
+                // Đặt múi giờ là múi giờ của Việt Nam
+                TimeZoneInfo vnTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+
+                DateTime today = TimeZoneInfo.ConvertTime(DateTime.Now, vnTimeZone);
+                DateTime ngayKetThuc = Convert.ToDateTime(item.NgayKetThuc);
+
+                <tr>
+                    <td>@item.SinhVien.HoSV @item.SinhVien.TenSV</td>
+                    <td>@Convert.ToDateTime(item.SinhVien.NgaySinh).ToString("dd/MM/yyyy")</td>
+                    <td>@item.SinhVien.CCCD</td>
+                    <td>@item.SinhVien.ThongTinLienLac.SDT</td>
+                    <td>@(item.MaTheBHYT ?? item.MaTheBHTN)</td>
+                    @if (ngayKetThuc < today)
+                    {
+                        <td class="text-danger">Hết hạn</td>
+                    }
+                    else if (ngayKetThuc.AddMonths(1) < today)
+                    {
+                        <td class="text-warning">Sắp hết hạn</td>
+                    }
+                    else
+                    {
+                        <td>Còn hạn</td>
+                    }
+                    <td></td>
+                </tr>
+            }
+
+
+        </table>
+      
+    </div>
+}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+       $(document).ready(function () {
+       $("#KhoaDropdown").change(function () {
+    var selectedKhoa = $(this).val();
+    var selectedNamHoc = $("#NamHocDropdown").val();
+
+    var dataToSend = { selectedKhoa: selectedKhoa };
+
+    // Nếu selectedNamHoc có giá trị, thêm dữ liệu năm học vào dataToSend
+    if (selectedNamHoc) {
+        dataToSend.startYear = selectedNamHoc.split('-')[0];
+        dataToSend.endYear = selectedNamHoc.split('-')[1];
+    }
+
+    $.ajax({
+        url: '@Url.Action("GetLopList_byKhoa")',
+        type: 'POST',
+        data: dataToSend,
+        success: function (data) {
+            // Cập nhật dropdownlist cho lớp
+            $("#LopDropdown").empty();
+            $.each(data, function (index, item) {
+                $("#LopDropdown").append($('<option>', {
+                    value: item.Value,
+                    text: item.Text
+                }));
+            });
+        }
+    });
+});
+
+
+$("#NamHocDropdown").change(function () {
+    var selectedKhoa = $("#KhoaDropdown").val();
+    var selectedNamHoc = $(this).val();
+
+    $.ajax({
+        url: '@Url.Action("GetLopList_byNamHoc")',
+        type: 'POST',
+        data: { startYear: selectedNamHoc.split('-')[0], endYear: selectedNamHoc.split('-')[1], selectedKhoa: selectedKhoa },
+        success: function (data) {
+            // Cập nhật dropdownlist cho lớp
+            $("#LopDropdown").empty();
+            $.each(data, function (index, item) {
+                $("#LopDropdown").append($('<option>', {
+                    value: item.Value,
+                    text: item.Text
+                }));
+            });
+        }
+    });
+});
+});
+    </script>

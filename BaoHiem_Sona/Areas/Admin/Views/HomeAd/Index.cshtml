@@ -1,0 +1,61 @@
+﻿@model IEnumerable<BaoHiem_Sona.Models.ThongBaoGui>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Trang chủ";
+}
+<style>
+    .da-doc a {
+    }
+
+    .chua-doc a {
+        font-weight: bold; /* In đậm cho thông báo chưa đọc */
+    }
+</style>
+
+<div class="divmain">
+    <div class="bgtitle">Thông báo</div>
+    <div>
+        <div>
+            <table width="100%" class="table table-bordered table-striped table-responsive">
+                <tbody>
+                    <tr>
+                        <th width="60%">Tiêu đề</th>
+                        <th width="20%" style="text-align:center">Người gửi</th>
+                        <th style="text-align:center">Thời gian gửi</th>
+                    </tr>
+                    @foreach (var item in Model)
+                    {
+
+                        <tr>
+                            <td class="@(item.isRead.Trim() == "Đã đọc" ? "da-doc" : "chua-doc")">
+                                <a href="~/Admin/HomeAd/ChiTiet/@item.ThongBao.ID" id="showmessage" onclick="ChangeStatus(@item.ThongBao.ID)" style="color:black">@item.ThongBao.TieuDe</a>
+                            </td>
+                            <td style="text-align:center">@item.ThongBao.NguoiTao</td>
+                            <td style="text-align:center">@Convert.ToDateTime(item.ThongBao.ThoiGian).ToString("dd/MM/yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function ChangeStatus(id) {
+        var clickedElement = event.currentTarget; // Lấy thẻ <a> được bấm
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ChangeStatusTB")',
+            data: { id: id },
+            success: function (result) {
+            },
+            error: function (error) {
+                console.error("Error: " + error.responseText);
+            }
+        });
+    }
+    window.addEventListener('unload', function () {
+        console.log("Success")
+        $('#showmessage').addClass('da-doc');
+    });
+</script>

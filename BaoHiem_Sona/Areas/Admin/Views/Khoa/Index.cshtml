@@ -1,0 +1,207 @@
+﻿
+@model IEnumerable<BaoHiem_Sona.Models.Khoa>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Danh mục khoa";
+}
+<div class="bgtitle">Danh mục khoa</div>
+<div class="row" style="margin:auto; padding-bottom:5px">
+    <a href="#" data-target="#ModalKhoa" data-toggle="modal" class="btn btn-default pull-right" style="margin-right:25px">Thêm khoa</a>
+</div>
+
+<table class="table table-bordered table-hover" style="margin-top:25px" id="myTableDefault">
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Tên khoa</th>
+            <th>#</th>
+        </tr>
+    </thead>
+    <tbody id="myTableFill">
+        @{
+            int i = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <tr class="text-center">
+                <td>@i</td>
+                <td>@item.TenKhoa</td>
+                <td>
+                    <a href="#" data-toggle="modal" data-target="#ModalEditKhoa" class="btn btn-primary editButton" data-khoa-id="@item.ID" id="editButton"> Sửa </a>
+                    <a href="javascript:void(0);" onclick="deleteKhoa(@item.ID)" class="btn btn-danger deleteBtn">Xóa</a>
+                </td>
+            </tr>
+            i++;
+        }
+    </tbody>
+</table>
+
+
+<!-- Modal thêm khoa -->
+<div id="ModalKhoa" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <form action="~/Admin/Khoa/Create" method="post">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Thêm khoa mới</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div>
+                            <label for="TenKhoa" class="col-sm-2 control-label">Tên khoa:</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="TenKhoa" name="TenKhoa" required />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success" id="CreateKhoa">Thêm</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@Html.Partial("Edit")
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+        $(document).on("click", "#editButton", function () {
+            var khoaId = $(this).data("khoa-id");
+            $.ajax({
+                url: '@Url.Action("Edit")' + '/' + khoaId,
+                type: 'get',
+                success: function (data) {
+                    $('#TenKhoaEdit').val(data.TenKhoa);
+                    $('#IDKhoa').val(data.ID);
+                    $('#ModalEditKhoa').modal('show');
+                },
+                error: function () {
+                    console.error('Đã xảy ra lỗi khi lấy dữ liệu.');
+                }
+            });
+        });
+
+        $(document).on("click", "#editButton", function () {
+            // Lấy giá trị data-khoa-id từ nút "Sửa"
+            var khoaId = $(this).data("khoa-id");
+
+            // Gọi hàm Ajax để lấy dữ liệu từ server
+            $.ajax({
+                url: '@Url.Action("Edit")' + '/' + khoaId, // Tạo URL sử dụng Razor syntax
+                type: 'GET',
+                success: function (data) {
+                    // Fill dữ liệu vào trường input
+                    $('#TenKhoa').val(data);
+
+                    // Hiển thị modal (nếu cần)
+                    $('#ModalEditKhoa').modal('show');
+                },
+                error: function () {
+                    console.error('Đã xảy ra lỗi khi lấy dữ liệu.');
+                }
+            });
+        });
+        $(document).on("click", "#deleteBtn", function () {
+            var khoaId = $(this).data("khoa-id");
+            deleteItem(khoaId);
+        });
+
+        // Bắt sự kiện khi form được submit
+        $("#CreateKhoa").click(function (e) {
+            // Ngăn chặn hành động mặc định của form
+            e.preventDefault();
+
+            // Kiểm tra validate trước khi hiển thị SweetAlert
+            if ($("#ModalKhoa form")[0].checkValidity()) {
+                // Hiển thị SweetAlert để xác nhận
+                Swal.fire({
+                    title: 'Xác nhận thêm khoa mới?',
+                    text: "Bạn có chắc muốn thêm khoa mới không?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Đồng ý',
+                    cancelButtonText: 'Hủy bỏ'
+                }).then((result) => {
+                    // Nếu người dùng đồng ý, submit form
+                    if (result.isConfirmed) {
+                        $("#ModalKhoa form").submit();
+                    }
+                });
+            }
+        });
+
+        // Bắt sự kiện khi form chỉnh sửa được submit
+        $("#EditKhoa").click(function (e) {
+            // Ngăn chặn hành động mặc định của form
+            e.preventDefault();
+
+            // Kiểm tra validate trước khi hiển thị SweetAlert
+            if ($("#ModalEditKhoa form")[0].checkValidity()) {
+                // Hiển thị SweetAlert để xác nhận
+                Swal.fire({
+                    title: 'Xác nhận chỉnh sửa?',
+                    text: "Bạn có chắc muốn chỉnh sửa không?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Đồng ý',
+                    cancelButtonText: 'Hủy bỏ'
+                }).then((result) => {
+                    // Nếu người dùng đồng ý, submit form
+                    if (result.isConfirmed) {
+                        $("#ModalEditKhoa form").submit();
+                    }
+                });
+            }
+        });
+
+        function deleteKhoa(id) {
+            // Ngăn chặn hành động mặc định của thẻ <a>
+
+            Swal.fire({
+                title: 'Xác nhận thông tin?',
+                text: 'Bạn có chắc muốn xóa?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy bỏ'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Thực hiện xóa
+                    $.ajax({
+                        url: '@Url.Action("Delete")/' + id,
+                        type: 'POST',
+                        success: function () {
+                            // Xử lý khi xóa thành công
+                            Swal.fire({
+                                title: 'Đã xóa!',
+                                text: 'Dữ liệu đã được xóa.',
+                                icon: 'success'
+                            }).then(function () {
+                                window.location.reload();
+
+                            });
+                        },
+                        error: function () {
+                            // Xử lý khi xóa thất bại
+                            Swal.fire({
+                                title: 'Lỗi!',
+                                text: 'Đã xảy ra lỗi khi xóa dữ liệu.',
+                                icon: 'error'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+</script>

@@ -1,0 +1,102 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Lịch sử chuyển giao";
+}
+<div class="bgtitle">Lịch sử chuyển giao bảo hiểm</div>
+<ul class="nav nav-tabs mt-5" id="projectTabs" role="tablist">
+    <li role="presentation" class="active">
+        <a href="#processing" id="processing-tab" data-toggle="tab" role="tab">Bảo hiểm y tế</a>
+    </li>
+    <li role="presentation">
+        <a href="#done" id="done-tab" data-toggle="tab" role="tab">Bảo hiểm tai nạn</a>
+    </li>
+
+</ul>
+
+<div class="tab-content" id="projectTabsContent">
+    <div class="tab-pane fade in active" id="processing" role="tabpanel">
+        <table id="myTableLichSu" class="table table-hover table-responsive table-bordered">
+            <thead>
+                <tr>
+                    <th>Mã thẻ BHYT</th>
+                    <th>Mã SV</th>
+                    <th>Họ và tên</th>
+                    <th>Lớp</th>
+                    <th>Ngày hiệu lực</th>
+                    <th>Ngày hết hạn</th>
+                    <th>Ngày Cấp</th>
+                </tr>
+
+            </thead>
+            <tbody>
+                @if (ViewBag.BHYT != null)
+                {
+                    foreach (var item in ViewBag.BHYT)
+                    {
+                        <tr class="text-center">
+                            <td>@item.MaTheBHYT</td>
+                            <td>@item.SinhVien.MaSV</td>
+                            <td>@item.SinhVien.HoSV @item.SinhVien.TenSV</td>
+                            <td>@item.SinhVien.Lop.TenLop</td>
+                            <td>@((item.NgayBatDau as DateTime?)?.ToString("dd/MM/yyyy"))</td>
+                            <td>@((item.NgayKetThuc as DateTime?)?.ToString("dd/MM/yyyy"))</td>
+                            <td style="color:sandybrown"><strong>@((item.NgayCap as DateTime?)?.ToString("dd/MM/yyyy"))</strong></td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <div class="row text-center">
+                        <p class="text-danger">Không có lịch sử nào được ghi</p>
+                    </div>
+
+                }
+            </tbody>
+        </table>
+        <br />
+
+    </div>
+    <div class="tab-pane fade " id="done" role="tabpanel">
+        @*Bảo hiểm tai nạn zone*@
+        <table id="myTableLichSu2" class="table table-hover table-responsive table-bordered">
+            <thead>
+                <tr>
+                    <th>Mã thẻ BHTN</th>
+                    <th>Mã SV</th>
+                    <th>Họ và tên</th>
+                    <th>Lớp</th>
+                    <th>Ngày hiệu lực</th>
+                    <th>Ngày hết hạn</th>
+                    <th>Ngày Cấp</th>
+                </tr>
+
+            </thead>
+            <tbody>
+                @if (ViewBag.BHTN != null)
+                {
+                    foreach (var item in ViewBag.BHTN)
+                    {
+                        <tr class="text-center">
+                            <td>@item.MaTheBHTN</td>
+                            <td>@item.SinhVien.MaSV</td>
+                            <td>@item.SinhVien.HoSV @item.SinhVien.TenSV</td>
+                            <td>@item.SinhVien.Lop.TenLop</td>
+                            <td>@((item.NgayBatDau as DateTime?)?.ToString("dd/MM/yyyy"))</td>
+                            <td>@((item.NgayKetThuc as DateTime?)?.ToString("dd/MM/yyyy"))</td>
+                            <td style="color:sandybrown"><strong>@((item.NgayCap as DateTime?)?.ToString("dd/MM/yyyy"))</strong></td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <div class="row text-center">
+                        <p class="text-danger">Không có lịch sử nào được ghi</p>
+                    </div>
+                }
+            </tbody>
+        </table>
+        <br />
+
+
+    </div>
+</div>

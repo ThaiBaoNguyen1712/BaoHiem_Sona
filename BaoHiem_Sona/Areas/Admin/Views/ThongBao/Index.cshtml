@@ -1,0 +1,38 @@
+﻿@model IEnumerable<BaoHiem_Sona.Models.ThongBao>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Quản lý thông báo";
+}
+<div class="bgtitle">Quản lý thông báo</div>
+<a href="~/Admin/ThongBao/Create" class="btn btn-success pull-right">Tạo thông báo</a>
+<br />
+
+<table class="table table-hover table-responsive table-bordered" style="margin-top:20px">
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Tiêu đề</th>
+            <th>Người đăng</th>
+            <th>Ngày tạo</th>
+            <th>#</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{ int i = 1;}
+        @foreach (var item in Model)
+        {
+            <tr class="text-center">
+                <td>@i</td>
+                <td>@item.TieuDe</td>
+                <td>@item.NguoiTao</td>
+                <td>@item.ThoiGian</td>
+                <td>
+                    <a href="~/Admin/ThongBao/Edit/@item.ID">[Sửa]</a>
+                    <a href="~/Admin/ThongBao/ChiTiet/@item.ID">[Chi tiết]</a>
+                    <a href="~/Admin/ThongBao/Delete/@item.ID">[Xóa]</a>
+                </td>
+            </tr>
+            i++;
+        }
+    </tbody>
+</table>

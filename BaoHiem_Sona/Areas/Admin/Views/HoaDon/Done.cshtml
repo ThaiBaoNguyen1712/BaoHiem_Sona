@@ -1,0 +1,95 @@
+﻿@model List<BaoHiem_Sona.Models.GiaoDich>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Hoàn tất";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="divmain mb-3">
+            <div class="bgtitle">Hóa đơn thanh toán thành công</div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid width-100">
+    @foreach (var item in Model)
+    {
+        <div class="row bg-warning" style="margin:auto">
+            <h4>Mã hóa đơn : #@item.ID</h4>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <p>Loại bảo hiểm: </p>
+                @if (item.ThoiHanDangKy_BHYT != null && item.ThoiHanDangKy_BHTN != null)
+                {
+                    <h3>Bảo hiểm y tế & Bảo hiểm tai nạn</h3>
+                }
+                else if (item.ThoiHanDangKy_BHYT != null)
+                {
+                    <h3>Bảo hiểm y tế</h3>
+                }
+                else if (item.ThoiHanDangKy_BHTN != null)
+                {
+                    <h3>Bảo hiểm tai nạn</h3>
+                }
+            </div>
+            <div class="col-md-4">
+                @if (item.ThoiHanDangKy_BHYT != null)
+                {
+                    <p>Thời hạn bảo hiểm y tế: </p> <h3>@item.ThoiHanDangKy_BHYT</h3>
+                    <input type="hidden" name="SelectedBHYTDuration" value="@ViewBag.Duration_BHYT" />
+                }
+                @if (item.ThoiHanDangKy_BHTN != null)
+                {
+                    <p>Thời hạn bảo hiểm tai nạn: </p> <h3>@item.ThoiHanDangKy_BHTN</h3>
+                    <input type="hidden" name="SelectedBHTNDuration" value="@ViewBag.Duration_BHTN" />
+                }
+            </div>
+            <div class="col-md-4">
+                <h5>Tổng tiền : </h5><h3 class="text-danger">@string.Format("{0:N0} ₫", item.TienThanhToan)</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">Thời gian giao dịch:<strong>@item.ThoiGian</strong></div>
+            <div class="col-md-6">
+                <p>Bệnh viện đăng ký :<strong>@item.BenhVienDangKy</strong> </p>
+
+            </div>
+        </div>
+
+        <hr />
+        <h3>Thông tin học sinh</h3>
+        <div class="row">
+            <div class="col-md-4">
+                <p>Mã SV: <strong> @item.SinhVien.MaSV</strong></p>
+                <p>Họ và tên:<strong>@item.SinhVien.HoSV @item.SinhVien.TenSV</strong></p>
+                <p>Ngày sinh:<strong> @Convert.ToDateTime(item.SinhVien.NgaySinh).ToString("dd/MM/yyyy")</strong></p>
+                <p>Giới tính:<strong>@item.SinhVien.GioiTinh</strong> </p>
+            </div>
+            <div class="col-md-4">
+                <p>Lớp:<strong> @item.SinhVien.Lop.TenLop</strong></p>
+                <p>SĐT: <strong> @item.SinhVien.ThongTinLienHe.SDT</strong></p>
+                <p>Email:<strong>@item.SinhVien.ThongTinLienHe.Email</strong> </p>
+
+            </div>
+            <div class="col-md-4">
+                <p>Số nhà:<strong>@item.SinhVien.ThongTinLienHe.SoNha</strong> </p>
+                <p>Phường xã: <strong>@item.SinhVien.ThongTinLienHe.Phuong_Xa</strong> </p>
+                <p>Quận huyện:<strong>@item.SinhVien.ThongTinLienHe.Quan_Huyen</strong> </p>
+                <p>Tỉnh,Thành: <strong> @item.SinhVien.ThongTinLienHe.Tinh_TP</strong></p>
+            </div>
+        </div>
+        <hr />
+
+
+    }
+</div>
+<button class="btn btn-success" onclick="back()"><i class="bi bi-backspace-fill"></i> Quay lại trang thu phí</button>
+<a href='~/Admin/HoaDon/ExportToPDF/?idHD=@string.Join(",", Model.Select(item => item.ID))' class="btn btn-warning pull-right"><i class="bi bi-printer-fill" id="PrintBtn"></i> In hóa đơn</a>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function back() {
+        window.location.href = "/Admin/HoaDon";
+
+    }
+</script>

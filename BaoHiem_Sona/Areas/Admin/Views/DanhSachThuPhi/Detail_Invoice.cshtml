@@ -1,0 +1,92 @@
+﻿@model BaoHiem_Sona.Models.GiaoDich
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="divmain mb-3">
+            <div class="bgtitle">Thông tin hóa đơn #@Model.ID</div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid width-100">
+    <div class="row">
+        <div class="col-md-4">
+            <p>Loại bảo hiểm: </p>
+            @if (ViewBag.BHYT && ViewBag.BHTN)
+            {
+                <h3>Bảo hiểm y tế & bảo hiểm tai nạn</h3>
+            }
+            else if (ViewBag.BHTN)
+            {
+                <h3>Bảo hiểm tai nạn</h3>
+            }
+            else if (ViewBag.BHYT)
+            {
+                <h3>Bảo hiểm y tế</h3>
+            }
+        </div>
+        <div class="col-md-4">
+            @if (Model.ThoiHanDangKy_BHYT != null)
+            {
+                <p>Thời hạn bảo hiểm y tế: </p> <h3>@Model.ThoiHanDangKy_BHYT</h3>
+            }
+            @if (Model.ThoiHanDangKy_BHTN != null)
+            {
+                <p>Thời hạn bảo hiểm tai nạn: </p> <h3>@Model.ThoiHanDangKy_BHTN</h3>
+            }
+        </div>
+        <div class="col-md-4">
+            @{
+                string formattedPrice = string.Format("{0:N0}", Model.TienThanhToan);
+            }
+            <h5>Số tiền đã thanh toán : </h5><h3 class="text-danger">@formattedPrice ₫</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">Thời gian giao dịch:<strong>@Model.ThoiGian</strong></div>
+        <div class="col-md-6">
+            <p>Bệnh viện đăng ký :<strong>@Model.BenhVienDangKy</strong> </p>
+
+        </div>
+    </div>
+
+    <hr />
+    <h3>Thông tin học sinh</h3>
+
+
+    <div class="row">
+        <div class="col-md-4">
+            <input type="hidden" name="_studentID" value="@Model.SinhVien.ID" />
+            <p>Mã SV: <strong> @Model.SinhVien.MaSV</strong></p>
+            <p>Họ và tên:<strong>@Model.SinhVien.HoSV @Model.SinhVien.TenSV</strong></p>
+            <p>Ngày sinh:<strong> @Convert.ToDateTime(Model.SinhVien.NgaySinh).ToString("dd/MM/yyyy")</strong></p>
+            <p>Giới tính:<strong>@Model.SinhVien.GioiTinh</strong> </p>
+        </div>
+        <div class="col-md-4">
+            <p>Lớp:<strong> @Model.SinhVien.Lop.TenLop</strong></p>
+            <p>SĐT: <strong> @Model.SinhVien.ThongTinLienHe.SDT</strong></p>
+            <p>Email:<strong>@Model.SinhVien.ThongTinLienHe.Email</strong> </p>
+
+        </div>
+        <div class="col-md-4">
+            <p>Số nhà:<strong>@Model.SinhVien.ThongTinLienHe.SoNha</strong> </p>
+            <p>Phường xã: <strong>@Model.SinhVien.ThongTinLienHe.Phuong_Xa</strong> </p>
+            <p>Quận huyện:<strong>@Model.SinhVien.ThongTinLienHe.Quan_Huyen</strong> </p>
+            <p>Tỉnh,Thành: <strong>@Model.SinhVien.ThongTinLienHe.Tinh_TP</strong></p>
+        </div>
+    </div>
+    <hr />
+
+
+
+    <textarea class="form-control" name="GhiChu" id="GhiChu" placeholder="Ghi chú...">@Model.GhiChu</textarea>
+    <br />
+    <button type="submit" class="btn btn-success pull-right" onclick="back() " style="padding:15px">Quay lại</button>
+
+</div>
+<script>
+    function back() {
+        window.history.back()
+    }
+</script>

@@ -1,0 +1,30 @@
+﻿<div id="ModalEditKhoa" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <form action="~/Admin/Khoa/Edit" method="post">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Chỉnh sửa khoa</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div>
+                            <label for="TenKhoa" class="col-sm-2 control-label">Tên khoa:</label>
+                            <div class="col-sm-10">
+                                <input type="hidden" value="ID" name="ID" id="IDKhoa" />
+                                <input type="text" class="form-control" id="TenKhoaEdit" name="TenKhoa" required />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success" id="EditKhoa">Sửa</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,154 @@
+﻿
+@model IEnumerable<BaoHiem_Sona.Models.NamHoc>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Danh mục năm học";
+}
+<div class="bgtitle">Danh mục năm học</div>
+<div class="row" style="margin:auto; padding-bottom:5px">
+    <a href="#" data-target="#ModalKhoa" data-toggle="modal" class="btn btn-default pull-right" style="margin-right:25px">Thêm năm học</a>
+</div>
+<table class="table table-bordered table-hover" style="margin-top:25px" id="myTableDefault">
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Năm</th>
+            <th>#</th>
+        </tr>
+    </thead>
+    <tbody id="myTableFill">
+        @{
+            int i = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <tr class="text-center">
+                <td>@i</td>
+                <td>@Convert.ToDateTime(item.StartYear).ToString("yyyy") - @Convert.ToDateTime(item.EndYear).ToString("yyyy")</td>
+                <td>
+                    <a href="javascript:void(0);" onclick="deleteNam(@item.ID)" class="btn btn-danger deleteBtn">Xóa</a>
+                </td>
+            </tr>
+            i++;
+        }
+    </tbody>
+</table>
+
+
+<!-- Modal thêm năm học -->
+<div id="ModalKhoa" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <form action="~/Admin/NamHoc/Create" method="post">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Thêm năm học mới</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div>
+                            <label for="TenKhoa" class="col-sm-2 control-label">Trong năm:</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="datepicker" name="StartYearHand" pattern="\d{4}" placeholder="Chỉ nhập năm...." required />
+                            </div>
+                        </div>
+
+                    </div>
+                    <br />
+                    <p class="text-warning text-center">Dữ liệu sẽ có dạng "Năm" - "Năm + 1". Ví dụ: 2022-2023</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success" id="CreateKhoa">Thêm</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/js/bootstrap-datepicker.min.js"></script>
+<script>
+        $(document).on("click", "#deleteBtn", function () {
+            var namId = $(this).data("khoa-id");
+            deleteItem(namId);
+        });
+
+        // Bắt sự kiện khi form được submit
+        $("#CreateKhoa").click(function (e) {
+            // Ngăn chặn hành động mặc định của form
+            e.preventDefault();
+
+            // Kiểm tra validate trước khi hiển thị SweetAlert
+            if ($("#ModalKhoa form")[0].checkValidity()) {
+                // Hiển thị SweetAlert để xác nhận
+                Swal.fire({
+                    title: 'Xác nhận thêm năm học mới?',
+                    text: "Bạn có chắc muốn thêm năm học mới không?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Đồng ý',
+                    cancelButtonText: 'Hủy bỏ'
+                }).then((result) => {
+                    // Nếu người dùng đồng ý, submit form
+                    if (result.isConfirmed) {
+                        $("#ModalKhoa form").submit();
+                    }
+                });
+            }
+        });
+    function deleteNam(id) {
+    // Ngăn chặn hành động mặc định của thẻ <a>
+
+    Swal.fire({
+        title: 'Xác nhận thông tin?',
+        text: 'Bạn có chắc muốn xóa?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Đồng ý',
+        cancelButtonText: 'Hủy bỏ'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Thực hiện xóa
+            $.ajax({
+                url: '@Url.Action("Delete")/' + id,
+                type: 'POST',
+                success: function () {
+                    // Xử lý khi xóa thành công
+                    Swal.fire({
+                        title: 'Đã xóa!',
+                        text: 'Dữ liệu đã được xóa.',
+                        icon: 'success'
+                    }).then(function () {
+                        window.location.reload();
+
+                    });
+                },
+                error: function () {
+                    // Xử lý khi xóa thất bại
+                    Swal.fire({
+                        title: 'Lỗi!',
+                        text: 'Đã xảy ra lỗi khi xóa dữ liệu.',
+                        icon: 'error'
+                    });
+                }
+            });
+        }
+    });
+    }
+    $(document).ready(function () {
+        $.noConflict();
+        $("#datepicker").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            autoclose: true
+        });
+    })
+    
+</script>

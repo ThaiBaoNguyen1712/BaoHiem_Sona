@@ -1,0 +1,289 @@
+﻿@model BaoHiem_Sona.Models.SinhVien
+@{ 
+    ViewBag.Title = "Thông tin";
+}
+<div class="bgtitle">Thông tin học sinh & bảo hiểm</div>
+
+<ul class="nav nav-tabs mt-5" id="projectTabs" role="tablist">
+    <li role="presentation" class="active">
+        <a href="#processing" id="processing-tab" data-toggle="tab" role="tab">Thông tin học sinh</a>
+    </li>
+    <li role="presentation">
+        <a href="#done" id="done-tab" data-toggle="tab" role="tab">Thông tin bảo hiểm</a>
+    </li>
+    <li class="nav-item pull-right" style="margin-right:30px">
+        <div class="row text-center">
+
+        </div>
+    </li>
+</ul>
+
+<div class="tab-content" id="projectTabsContent">
+    <div class="tab-pane fade in active" id="processing" role="tabpanel">
+
+        <div class="divmain" style="margin-bottom: 20px">
+
+            <div class="row" style="margin: 0px">
+                <div class="col-md-6">
+                    <div class="row" style="text-align:center">
+                        <div class="col-md-12" style="margin-bottom: 23px;">
+                            <img id="img" src="~/Upload/Students/@Model.Image" style="width: 130px; height: 160px; padding: 10px; margin: 15px;" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <input type="hidden" class="form-control" id="ID" name="ID" value="@Model.ID" required />
+                        <div class="col-md-12 cus-boder">
+                            Mã SV:
+                            <label> @Model.MaSV</label>
+                        </div>
+                        <div class="col-md-12 cus-boder">
+                            Họ & tên
+                            <label>  @Model.HoSV  @Model.TenSV</label>
+                        </div>
+                        <div class="col-md-12 cus-boder">
+                            Giới tính:
+                            <label>  @Model.GioiTinh</label>
+                        </div>
+                        <br />
+                        <div class="col-md-12 cus-boder">
+                            Ngày sinh:
+                            <label>  @Convert.ToDateTime(@Model.NgaySinh).ToString("dd/MM/yyyy")</label>
+
+                        </div>
+                        <div class="col-md-12 cus-boder">
+                            CCCD:
+                            <label>@Model.CCCD</label>
+                        </div>
+                        <div class="col-md-12  cus-boder">
+                            Tình trạng BHYT:
+                            <label> @Model.TinhTrang.TenTinhTrang</label>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-12 cus-header">
+                            <h3> Thông tin liên lạc</h3>
+                        </div>
+                        @if (Model.ThongTinLienHe.Tinh_TP != null && Model.ThongTinLienHe.Quan_Huyen != null && Model.ThongTinLienHe.Phuong_Xa != null)
+                        {
+                            <div class="col-md-12 cus-boder">
+                                Tỉnh thành:
+                                <label> @Model.ThongTinLienHe.Tinh_TP</label>
+
+                            </div>
+                            <div class="col-md-12 cus-boder">
+                                Quận huyện:
+                                <label> @Model.ThongTinLienHe.Quan_Huyen</label>
+
+                            </div>
+                            <div class="col-md-12 cus-boder">
+                                Phường:
+                                <label> @Model.ThongTinLienHe.Phuong_Xa</label>
+
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-md-12 cus-boder">
+                                Tỉnh thành:
+
+
+                            </div>
+                            <div class="col-md-12 cus-boder">
+                                Quận huyện:
+
+                            </div>
+                            <div class="col-md-12 cus-boder">
+                                Phường:
+
+                            </div>
+                        }
+
+                        <div class="col-md-12  cus-boder">
+                            Địa chỉ liên lạc SV:
+                            <label> @Model.ThongTinLienHe.SoNha</label>
+                        </div>
+                        <div class="col-md-12  cus-boder">
+                            Di động:
+                            <label> @Model.ThongTinLienHe.SDT</label>
+                        </div>
+                        <div class="col-md-12  cus-boder">
+                            Email cá nhân:
+                            <label>@Model.ThongTinLienHe.Email</label>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-12 cus-header">
+                            <h3>Thông tin bảo hiểm</h3>
+                        </div>
+                        <div class="col-md-12 cus-boder">
+                          Mã bảo hiểm đã được cấp:
+
+                            <label>@Model.BHYT_DaCap</label>  
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h3> Thông tin lớp học</h3>
+                    <div class="row">
+                        <div class="col-md-12  cus-boder">
+                            <p>Năm học : <strong>@Convert.ToDateTime(Model.Lop.NamBatDau).ToString("yyyy") - @Convert.ToDateTime(Model.Lop.NamKetThuc).ToString("yyyy")</strong></p>
+                        </div>
+                        <div class="col-md-12  cus-boder">
+                            <p>Khoa :   <strong>@Model.Lop.Khoa.TenKhoa</strong> </p>
+                        </div>
+                        <div class="col-md-12 cus-boder">
+                            <p>Lớp sinh viên : <strong>@Model.Lop.TenLop</strong> </p>
+                        </div>
+                        <br />
+                        <div class="col-md-12  cus-boder">
+                            <button type="button" data-toggle="modal" data-target="#studentInfoModal" class="btn btn-primary btn-link" id="updateButton">
+                                [Cập nhật thông tin cá nhân]
+                            </button>
+                            @Html.Partial("Edit")
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+
+
+    </div>
+    <div class="tab-pane fade" id="done" role="tabpanel" style="min-height:400px">
+        <!--  Thông tin bảo hiểm -->
+        <h5>Thông tin bảo hiểm y tế</h5>
+        @if (ViewBag.BHYT != null)
+        {
+            foreach (var item in ViewBag.BHYT)
+            {
+                if (item.MaTheBHYT != null)
+                {
+                    <hr />
+                    <div class="row text-center">
+                        <h4> Bảo hiểm y tế hiệu lực năm : <strong>@((item.NgayBatDau as DateTime?)?.ToString("yyyy"))</strong></h4>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <input type="hidden" name="ID_BHYT" value="@item.ID" />
+                        <div class="col-md-4">
+                            Mã bảo hiểm y tế :
+                            <label> @item.MaTheBHYT.Trim() </label>
+                        </div>
+                        <div class="col-md-4">
+                            Ngày hiệu lực bảo hiểm y tế :
+                            <label>  @((item.NgayBatDau as DateTime?)?.ToString("dd/MM/yyyy")) </label>
+                        </div>
+                        <div class="col-md-4">
+                            Ngày hết hiệu lực bảo hiểm y tế:
+                            <label>   @((item.NgayKetThuc as DateTime?)?.ToString("dd/MM/yyyy")) </label>
+                        </div>
+                    </div>
+
+                }
+                else
+                {
+                    <p class="text-center text-warning">mã thẻ BHYT năm nay chưa được cấp</p>
+                }
+            }
+        }
+        else
+        {
+            <h4 class="text-center text-danger">Chưa tham gia BHYT</h4>
+        }
+
+
+        <h5 style="margin-top:40px">Thông tin bảo hiểm tai nạn</h5>
+
+        @if (ViewBag.BHTN != null)
+        {
+            foreach (var item in ViewBag.BHTN)
+            {
+                if (item.MaTheBHTN != null)
+                {
+                    <input type="hidden" name="ID_BHTN" value="@item.ID" />
+                    <hr />
+                    <div class="row text-center">
+                        <h4> Bảo hiểm tai nạn hiệu lực năm : <strong>@((item.NgayBatDau as DateTime?)?.ToString("yyyy"))</strong></h4>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-4">
+                            Mã bảo hiểm tai nạn :
+                            <label>  @item.MaTheBHTN.Trim()</label>
+                        </div>
+                        <div class="col-md-4">
+                            Ngày hiệu lực bảo hiểm tai nạn:
+                            <label>  @((item.NgayBatDau as DateTime?)?.ToString("dd/MM/yyyy"))</label>
+                        </div>
+                        <div class="col-md-4">
+                            Ngày hết hiệu lực bảo hiểm tai nạn:
+                            <label> @((item.NgayKetThuc as DateTime?)?.ToString("dd/MM/yyyy")) </label>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-center text-warning">mã thẻ BHTN năm nay chưa được cấp</p>
+                }
+            }
+        }
+        else
+        {
+            <h4 class="text-center text-danger">Chưa tham gia BHTN</h4>
+        }
+
+
+
+    </div>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    function previewImage(event) {
+        var fileInput = event.target;
+        var file = fileInput.files[0];
+        var preview = document.getElementById("preview");
+
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = "~/Upload/Client/none.jpg";
+        }
+    }
+        $(document).ready(function () {
+            // Thực hiện yêu cầu Ajax để lấy giá trị từ SetBtnUpdate
+            $.ajax({
+                url: '@Url.Action("SetBtnUpdate")',
+                type: 'GET',
+                success: function (response) {
+                    if (response === 'Cho phép') {
+                        $('#updateButton').prop('disabled', false);
+                    } else {
+                        $('#updateButton').prop('disabled', true);
+                    }
+                },
+                error: function () {
+                    console.error('Đã xảy ra lỗi khi lấy giá trị.');
+                }
+            });
+        });
+
+
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js" integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="~/Scripts/API_Province.js"></script>

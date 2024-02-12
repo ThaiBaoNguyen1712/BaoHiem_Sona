@@ -1,0 +1,73 @@
+﻿@model IEnumerable<BaoHiem_Sona.Models.SinhVien>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="divmain" style="margin-bottom: 20px">
+    <div class="bgtitle">Danh sách sinh viên</div>
+    <div class="row" style="margin:auto">
+        <form action="~/Admin/DanhSachSV/DSSV" method="post">
+            <div class="col-md-3">
+                <label for="TinhTrang">Tình trạng BHYT:</label>
+                @Html.DropDownList("TinhTrang", ViewData["TinhTrang"] as SelectList, "Tất cả", new { @class = "form-control text-center", @id = "TinhTrang" })
+
+            </div>
+            <div class="col-md-3" style="padding:20px">
+                <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+            </div>
+            <div class="col-md-3"></div>
+            <div class="col-md-3">
+                <div class="dropdown" style="padding-top:10px;margin-left:30px">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" style="padding:10px">
+                        <i class="bi bi-gear-fill"></i>  Tùy chọn
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" style="margin-right:15px">
+                        <li>
+                           <a href="~/Admin/DanhSachSV/Create" class=""><i class="bi bi-person-fill-add"></i> Thêm sinh viên</a>
+
+                       </li>
+                        <li><a href="~/Admin/DanhSachSV/BatchSVUpload"><i class="bi bi-file-earmark-arrow-up"></i> Nhập file Excel</a></li>
+         
+                    </ul>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="table-responsive">
+        <table id="myTableSV" class="table table-bordered text-center table-hover">
+            <thead>
+                <tr class="bg-warning">
+                    <th class="text-center">STT</th>
+                    <th class="text-center">Mã SV</th>
+                    <th class="text-center">Họ & tên lót</th>
+                    <th class="text-center">Tên</th>
+                    <th class="text-center">Ngày sinh</th>
+                    <th class="text-center">Lớp</th>
+                    <th class="text-center">Tình trạng</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int i = 1;}
+                @foreach (var item in Model)
+                {
+
+                    <tr>
+                        <td>@i</td>
+                        <td>@item.MaSV</td>
+                        <td>@item.HoSV</td>
+                        <td>@item.TenSV</td>
+                        <td>@Convert.ToDateTime(item.NgaySinh).ToString("dd/MM/yyyy")</td>
+                        <td>@item.Lop.TenLop</td>
+                        <td>@item.TinhTrang.TenTinhTrang</td>
+
+                        <td>
+                            <a href="~/Admin/DanhSachSV/Edit/@item.MaSV">[Chỉnh sửa]</a>
+                        </td>
+                    </tr>
+                    i++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

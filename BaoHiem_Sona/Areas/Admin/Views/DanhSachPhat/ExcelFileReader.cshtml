@@ -1,0 +1,256 @@
+﻿
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css" integrity="sha384-b6lVK+yci+bfDmaY1u0zE8YYJt0TZxLEAFyYSLHId4xoVvsrQu3INevFKo+Xir8e" crossorigin="anonymous">
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/jquery")
+@{
+    Layout = null;
+}
+<style>
+    body {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        background-color: #FEFFAC;
+    }
+
+    .container {
+        margin-top: 20px;
+        background-color: white;
+        min-height: 400px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .table {
+        margin-bottom: 0; /* Loại bỏ margin dưới cùng của bảng */
+    }
+
+        .table th, .table td {
+            text-align: center;
+        }
+
+    .table-hover tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .bg-warning {
+        background-color: #f0ad4e !important;
+        color: #fff;
+    }
+</style>
+
+
+<div class="container-fluid" style="background-color: #FEFFAC">
+    <div class="container-fluid" style="background-color:white;min-height:400px;">
+        <div class="row">
+            <div class="col-md-5">
+                <h4 class="text-danger"><i class="bi bi-exclamation-triangle-fill text-danger" style="height:35px"></i> Chú ý</h4><br />
+                Nếu không tuân thủ theo quy tắc sẽ gây ra lỗi, cũng như xáo trộn trong cơ sở dữ liệu.
+
+            </div>
+            <div class="col-md-2"></div>
+            <div class="col-md-5">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>
+                                Quy định
+                            </th>
+                            <th>
+                                Kiểu dạng
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Nếu gặp cảnh báo lỗi MSSV, nếu chưa thay đổi, sẽ <p class="text-danger">KHÔNG ĐƯỢC PHÉP THÊM</p> </td>
+                            <td><p class="text-danger">Bắt buộc</p></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <form action="~/Admin/DanhSachPhat/UploadCode" method="post">
+            @Html.AntiForgeryToken()
+            <div class="table-responsive" style="margin-top:20px">
+                <table id="myTable" class="table table-bordered ">
+                    <thead>
+                        <tr class="bg-primary">
+                            <th>Mã SV</th>
+                            <th>Họ và tên lót</th>
+                            <th>Tên SV</th>
+                            <th>Giới tính</th>
+                            <th>CCCD</th>
+                            <th>Ngày sinh</th>
+                            <th>Lớp</th>
+                            <th>Loại BH</th>
+                            <th>Mã BHYT</th>
+                            <th>Thời hạn BHYT đăng ký</th>
+                            <th>Ngày hiệu lực BHYT</th>
+                            <th>Mã BHTN</th>
+                            <th>Thời hạn BHTN đăng ký</th>
+                            <th>Ngày hiệu lực BHTN</th>
+                            <th>Ghi chú</th>
+                            <th>#</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ViewBag.ExcelData != null && ViewBag.ExcelData.Count > 1)
+                        {
+                            for (var i = 0; i < ViewBag.ExcelData.Count; i++)
+                            {
+                                var row = ViewBag.ExcelData[i];
+
+                                <tr>
+                                    <td>
+                                        <input type="text" class="form-control-static" name="svList[@i].MaSV" value="@row.MaSV" @(string.IsNullOrEmpty(row.MaSV) ? "" : "readonly") />
+                                    </td>
+                                    <td><input type="text" class="form-control-static" name="svList[@i].HoSV" value="@row.HoSV" readonly /></td>
+                                    <td><input type="text" class="form-control-static" name="svList[@i].TenSV" value="@row.TenSV" readonly /></td>
+                                    <td><input type="text" class="form-control-static" name="svList[@i].GioiTinh" value="@row.GioiTinh" readonly /></td>
+                                    <td><input type="text" class="form-control-static" name="svList[@i].CCCD" value="@row.CCCD" readonly /></td>
+                                    <td><input type="text" class="form-control-static" name="svList[@i].NgaySinh" value="@row.NgaySinh" readonly /></td>
+                                    <td><input type="text" class="form-control-static" name="svList[@i].Lop.TenLop" value="@row.TenLop" readonly /></td>
+                                    <td>
+                                        <input type="text" class="form-control-static" name="LoaiBH" value="@row.LoaiBH" readonly />
+                                    </td>
+
+                                    <td>
+                                        <input type="text" class="form-control-static" name="BHYTList[@i].MaTheBHYT"  pattern="\d{10}" title="Vui lòng nhập đúng 10 ký tự số" value="@row.MaBHYT" @(row.LoaiBH.Contains("Bảo hiểm y tế") ? "" : "readonly")/>
+                                    </td>
+
+                                    <td>
+                                        <input type="text" class="form-control-static" name="gdList[@i].ThoiHanDangKy_BHYT" value="@row.ThoiHanBHYT" @(row.LoaiBH.Contains("Bảo hiểm y tế") ? "" : "readonly") />
+                                    </td>
+
+                                    <td>
+                                        <input type="date" class="form-control-static" name="BHYTList[@i].NgayBatDau" value="@row.NgayHieuLuc_BHYT" @(row.LoaiBH.Contains("Bảo hiểm y tế") ? "" : "readonly") />
+                                    </td>
+
+                                    <td>
+                                        <input type="text" class="form-control-static" name="BHTNList[@i].MaTheBHTN"  pattern="\d{10}" title="Vui lòng nhập đúng 10 ký tự số" value="@row.MaBHTN" @(row.LoaiBH.Contains("Bảo hiểm tai nạn") ? "" : "readonly")  />
+                                    </td>
+
+                                    <td>
+                                        <input type="text" class="form-control-static" name="gdList[@i].ThoiHanDangKy_BHTN" value="@row.ThoiHanBHTN" @(row.LoaiBH.Contains("Bảo hiểm tai nạn") ? "" : "readonly") />
+                                    </td>
+
+                                    <td>
+                                        <input type="date" class="form-control-static" name="BHTNList[@i].NgayBatDau" value="@row.NgayHieuLuc_BHTN" @(row.LoaiBH.Contains("Bảo hiểm tai nạn") ? "" : "readonly") />
+                                    </td>
+
+                                    <td><input type="text" class="form-control-static" name="gdList[@i].GhiChu" value="@row.GhiChu" /></td>
+                                    <td>
+                                        <i class="bi bi-check-circle-fill text-success"></i>
+                                        <input type="Hidden" id="error" class="form-control" name="Error" value="" />
+                                    </td>
+                                </tr>
+
+                            }
+                        }
+                    </tbody>
+                </table>
+
+                <br />
+                <button class="btn btn-success" type="submit" style="padding:10px">Đồng ý</button>
+            </div>
+        </form>
+        @if (ViewBag.Error != null && ViewBag.Error.Count > 1)
+        {
+            <table class="table">
+
+                <tr class="text-center">Đã có lỗi ở các dòng</tr>
+
+                <thead>
+                    <tr class="bg-primary">
+                        <th>Mã SV</th>
+                        <th>Họ và tên lót</th>
+                        <th>Tên SV</th>
+                        <th>Giới tính</th>
+                        <th>CCCD</th>
+                        <th>Ngày sinh</th>
+                        <th>Lớp</th>
+                        <th>Loại BH</th>
+                        <th>Ngày đóng phí</th>
+                        <th>Số tiền đóng</th>
+                        <th>Thời hạn BHYT đăng ký</th>
+                        <th>Thời hạn BHTN đăng ký</th>
+                        <th>Ghi chú</th>
+                        <th>#</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ViewBag.Error)
+                    {
+                        <tr style="background-color:orange">
+                            <td>@item.MaSV</td>
+                            <td>@item.HoSV </td>
+                            <td>@item.TenSV</td>
+                            <td>@item.GioiTinh</td>
+                            <td>@item.CCCD"</td>
+                            <td>@item.NgaySinh</td>
+                            <td>@item.TenLop</td>
+                            <td>@item.LoaiBH</td>
+                            <td>@item.NgayDongPhi</td>
+                            <td>@item.SoTienDong</td>
+                            <td>@item.ThoiHanBHYT</td>
+                            <td>@item.ThoiHanBHTN</td>
+                            <td>@item.GhiChu</td>
+                            <td>
+                                <a href="javascript:void(0)" title="Dữ liệu học sinh chưa tồn tại" data-toggle="popover" data-trigger="hover" data-content="Cảnh báo trùng lặp"><i class="bi bi-exclamation-triangle-fill text-warning"></i></a>
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<script src="~/Scripts/site/Datatables.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Sử dụng .on() để gắn sự kiện cho các nút refresh
+        $(document).on('click', '.send-refresh', function () {
+            // Lấy giá trị của input trong cùng một dòng
+            var maSV = $(this).closest('tr').find('.masv-input').val();
+            var row = $(this).closest('tr'); // Reference to the current row
+
+            var dataToSend = { maSvValue: maSV };
+            if (maSV != null && maSV.trim() !== '') {
+                $.ajax({
+                    url: '@Url.Action("CheckMaSVQueryRefresh")',
+                    type: 'POST',
+                    data: dataToSend,
+                    success: function (result) {
+                        console.log('Refreshing MaSV:', maSV);
+                        var successTd = row.find('#Success');
+                        var warningTd = row.find('#Warning');
+                        var masvInput = row.find('.masv-input');
+                        if (result) {
+                            row.css('background-color', '');
+                            successTd.show();
+                            warningTd.hide();
+                            row.find('input[name="Error"]').val('');
+                            masvInput.prop('readonly', true);
+                        } else {
+                            alert('Mã Sinh viên đã tồn tại. Vui lòng kiểm tra lại.');
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Error refreshing MaSV:', error);
+                    }
+                });
+            } else {
+                alert('Vui lòng nhập mã Sinh viên.');
+            }
+        });
+    });
+</script>
+

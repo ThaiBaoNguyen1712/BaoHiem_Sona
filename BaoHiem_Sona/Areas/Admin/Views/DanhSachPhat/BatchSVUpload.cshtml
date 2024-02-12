@@ -1,0 +1,33 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="divmain" style="margin-bottom: 20px">
+    <div class="bgtitle">Nhập thông tin từ file Excel</div>
+    <div class="container">
+        <button class="btn btn-success" onclick="back()"> <i class="bi bi-backspace-fill"></i> Quay lại</button>
+        <br />
+        <p class="text-danger">(*)Vui lòng chọn đúng định dạng và chuẩn theo form mẫu để tránh việc gây ra lỗi & gây xáo trộn CSDL về sau</p>
+        <form method="post" action="~/Admin/DanhSachPhat/ExcelFileReader" enctype="multipart/form-data" id="ExcelData" target="_blank">
+            @Html.AntiForgeryToken()
+
+            <div class="row">
+                <label>Chọn file excel</label>
+                <input type="file" class="form-control" style="width:75%" name="file" id="fileInput" placeholder="Chọn" />
+            </div>
+            <div class="row" style="padding-top: 10px;">
+                <div class="col-3">
+
+                    <button type="submit" class="btn btn-dark">Xem trước file</button>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function back() {
+        window.history.back();
+    }
+</script>

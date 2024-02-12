@@ -1,0 +1,92 @@
+﻿@model IEnumerable<BaoHiem_Sona.Models.SinhVien>
+@{
+    BaoHiem_Sona.Models.BHYTEntities db = new BaoHiem_Sona.Models.BHYTEntities();
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="divmain" style="margin-bottom: 20px">
+    <div class="bgtitle">Danh sách sinh viên</div>
+    <div class="row" style="margin:auto">
+        <form action="~/Admin/DanhSachPhat/DSSV" method="post">
+            <div class="col-md-3">
+                <label for="TinhTrang">Tình trạng BHYT:</label>
+                @Html.DropDownList("TinhTrang", ViewData["TinhTrang"] as SelectList, "Tất cả", new { @class = "form-control text-center", @id = "TinhTrang" })
+            </div>
+            <div class="col-md-3" style="padding: 20px">
+                <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+            </div>
+            <div class="col-md-3" style="padding: 20px">
+            </div>
+            <div class="col-md-3 text-right" style="padding: 20px">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" style="padding:15px">
+                        Cấp mã bảo hiểm
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="~/Admin/DanhSachPhat/Provide_BHYT">Bảo hiểm y tế</a></li>
+                        <li><a href="~/Admin/DanhSachPhat/Provide_BHTN">Bảo hiểm tai nạn</a></li>
+
+                    </ul>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="table-responsive">
+        <table id="myTableSV" class="table table-bordered text-center table-hover">
+            <thead>
+                <tr class="bg-warning">
+                    <th class="text-center">STT</th>
+                    <th class="text-center">Mã SV</th>
+                    <th class="text-center">Họ & tên lót</th>
+                    <th class="text-center">Tên</th>
+                    <th class="text-center">Ngày sinh</th>
+                    <th class="text-center">Lớp</th>
+                    <th class="text-center">Tinh Trang</th>
+                    <th class="text-center">Mã BHYT</th>
+                    <th class="text-center">Mã BHTN</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int i = 0;}
+                @foreach (var item in ViewBag.Students)
+                {
+                    var studentID = item.ID.ToString(); // Chuyển item.ID thành một giá trị không động
+                    int studentIDInt = int.Parse(studentID); // Chuyển đổi sang kiểu integer
+
+                    var bhyt = db.BHYT.Where(x => x.ID_SV == studentIDInt).Select(x => x.MaTheBHYT).FirstOrDefault();
+                    var bhtn = db.BHTN.Where(x => x.ID_SV == studentIDInt).Select(x => x.MaTheBHTN).FirstOrDefault();
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@item.MaSV</td>
+                        <td>@item.HoSV</td>
+                        <td>@item.TenSV</td>
+                        <td>@Convert.ToDateTime(item.NgaySinh).ToString("dd/MM/yyyy")</td>
+                        <td>@item.Lop.TenLop</td>
+                        <td>@item.TinhTrang.TenTinhTrang</td>
+                        <td>
+                            @if (bhyt != null)
+                            {
+                                @bhyt
+                            }
+                        </td>
+
+                        <td>
+                            @if (bhtn != null)
+                            {
+                                @bhtn
+                            }
+                        </td>
+
+                        <td>
+                            <a href="~/Admin/DanhSachPhat/Edit/@item.MaSV">[Chỉnh sửa]</a>
+                        </td>
+                    </tr>
+                    i++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,38 @@
+﻿@model BaoHiem_Sona.Models.ThongBao
+
+@{
+    ViewBag.Title = "Chỉnh sửa bài đăng";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Chỉnh sửa thông báo";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="divmain mb-3">
+            <div class="bgtitle">Tạo thông báo</div>
+        </div>
+    </div>
+</div>
+<form method="post" action="~/Admin/ThongBao/Edit">
+    <div>
+        <input type="hidden" name="ID" value="@Model.ID" />
+        <label>Tiêu đề: </label>
+        @Html.TextAreaFor(model => model.TieuDe, new { @class = "form-control", @name = "TieuDe" })
+        <label>Người đăng tin: </label>
+        <input type="text" name="NguoiTao" value="@Model.NguoiTao" class="form-control" />
+        <label for="field-2" class="control-label">Nội dung</label>
+        @Html.TextAreaFor(model => model.NoiDung, new { @id = "m_detail", @class = "form-control", @name = "NoiDung" })
+
+    </div>
+    <br />
+    <button type="submit" class="btn btn-success">Sửa tin</button>
+</form>
+
+<script src="~/Scripts/site/ckeditor/ckeditor.js"></script>
+<script>
+    var ckEditor = CKEDITOR.replace('m_detail',
+        { customConfig: '/ckeditor/config.js', });
+
+</script>
+
+

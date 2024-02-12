@@ -1,0 +1,112 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Xác nhận hóa đơn";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="divmain mb-3">
+            <div class="bgtitle">Xác nhận thông tin hóa đơn</div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid width-100">
+
+
+    <form method="post" action="~/Admin/HoaDon/Confirm" id="payForm">
+        <input type="hidden" name="InsuranceType" value="@ViewBag.InsuranceType" />
+        <input type="hidden" name="Total" value="@ViewBag.RealPrice" />
+        <input type="hidden" name="Hospital" value="@ViewBag.Hospital" />
+
+
+        <input type="hidden" name="Time" value="@ViewBag.Time" />
+
+
+        <div class="row">
+            <div class="col-md-4">
+                <p>Loại bảo hiểm: </p><h3>@ViewBag.InsuranceType</h3>
+            </div>
+            <div class="col-md-4">
+                @if (ViewBag.Duration_BHYT != null)
+                {
+                    <p>Thời hạn bảo hiểm y tế: </p> <h3>@ViewBag.Duration_BHYT</h3>
+                    <input type="hidden" name="SelectedBHYTDuration" value="@ViewBag.Duration_BHYT" />
+                }
+                @if (ViewBag.Duration_BHTN != null)
+                {
+                    <p>Thời hạn bảo hiểm tai nạn: </p> <h3>@ViewBag.Duration_BHTN</h3>
+                    <input type="hidden" name="SelectedBHTNDuration" value="@ViewBag.Duration_BHTN" />
+                }
+            </div>
+            <div class="col-md-4">
+                <h5>Số tiền cần thanh toán : </h5><h3 class="text-danger">@ViewBag.Price ₫</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">Thời gian giao dịch:<strong>@ViewBag.Time</strong></div>
+            <div class="col-md-6">
+                <p>Bệnh viện đăng ký :<strong>@ViewBag.Hospital</strong> </p>
+
+            </div>
+        </div>
+
+        <hr />
+        <h3>Thông tin học sinh</h3>
+
+        @foreach (var student in ViewBag.SelectedStudents)
+        {
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="hidden" name="_studentID" value="@student.ID" />
+                    <p>Mã SV: <strong> @student.MaSV</strong></p>
+                    <p>Họ và tên:<strong>@student.HoSV @student.TenSV</strong></p>
+                    <p>Ngày sinh:<strong> @Convert.ToDateTime(student.NgaySinh).ToString("dd/MM/yyyy")</strong></p>
+                    <p>Giới tính:<strong>@student.GioiTinh</strong> </p>
+                </div>
+                <div class="col-md-4">
+                    <p>Lớp:<strong> @student.Lop.TenLop</strong></p>
+                    <p>SĐT: <strong> @student.ThongTinLienHe.SDT</strong></p>
+                    <p>Email:<strong>@student.ThongTinLienHe.Email</strong> </p>
+
+                </div>
+                <div class="col-md-4">
+                    <p>Số nhà:<strong>@student.ThongTinLienHe.SoNha</strong> </p>
+                    <p>Phường xã: <strong>@student.ThongTinLienHe.Phuong_Xa</strong> </p>
+                    <p>Quận huyện:<strong>@student.ThongTinLienHe.Quan_Huyen</strong> </p>
+                    <p>Tỉnh,Thành: <strong> @student.ThongTinLienHe.Tinh_TP</strong></p>
+                </div>
+            </div>
+            <hr />
+        }
+
+
+        <textarea class="form-control" name="GhiChu" id="GhiChu" placeholder="Ghi chú..."></textarea>
+        <br />
+        <button type="submit" id="payBtn" class="btn btn-success pull-right" style="padding:15px">Xác nhận</button>
+
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Bắt sự kiện khi form được submit
+        $("#payBtn").click(function (e) {
+            // Ngăn chặn hành động mặc định của form
+            e.preventDefault();
+            // Hiển thị SweetAlert để xác nhận
+            Swal.fire({
+                title: 'Xác nhận thanh toán?',
+                text: "Bạn có chắc muốn thanh toán không?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy bỏ'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $("#payForm").submit();
+                }
+            });
+        });
+    });
+</script>

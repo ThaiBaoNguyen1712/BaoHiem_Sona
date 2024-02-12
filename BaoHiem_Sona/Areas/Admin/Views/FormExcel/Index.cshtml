@@ -1,0 +1,25 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Form Excel";
+}
+<div class="bgtitle">Form Excel mẫu</div>
+<div class="row">
+    <form method="post" action="~/Admin/FormExcel/FormSV">
+        <div class="col-md-4 text-center">
+            <label class="text-center">Mẫu nhập sinh viên</label>
+            <button class="btn btn-success form-control" type="submit"> <i class="bi bi-download"></i>Tải xuống</button>
+        </div>
+    </form>
+    <form method="post" action="~/Admin/FormExcel/FormThuPhi">
+        <div class="col-md-4 text-center">
+            <label class="text-center">Mẫu nhập giao dịch</label>
+            <button class="btn btn-success form-control" type="submit"> <i class="bi bi-download"></i>Tải xuống</button>
+        </div>
+    </form>
+    <form method="post" action="~/Admin/FormExcel/FormCapMa">
+        <div class="col-md-4 text-center">
+            <label class="text-center">Mẫu nhập cấp phát bảo hiểm</label>
+            <button class="btn btn-success form-control" type="submit"> <i class="bi bi-download"></i>Tải xuống</button>
+        </div>
+    </form>
+</div>

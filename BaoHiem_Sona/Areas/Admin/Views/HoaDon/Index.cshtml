@@ -1,0 +1,247 @@
+﻿
+@model IEnumerable<BaoHiem_Sona.Models.SinhVien>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Mua bảo hiểm";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="divmain mb-3">
+            <div class="bgtitle">Thu phí BHYT</div>
+        </div>
+    </div>
+</div>
+<form action="~/Admin/HoaDon/Index" method="post">
+    <div>
+        <div class="row" style="margin:auto">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="insuranceType">Loại Bảo hiểm:</label>
+                    <select class="form-control text-center" name="SelectedInsurance" id="SelectedInsurance">
+                        <option value="null">---Chọn loại bảo hiểm---</option>
+                        <option value="bhyt" selected>Bảo hiểm y tế</option>
+                        <option value="bhtn">Bảo hiểm tai nạn</option>
+                        <option value="both">Bảo hiểm y tế & Bảo hiểm tai nạn</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group" id="BHYTDurationDiv">
+                    <label for="Duration">Thời hạn bảo hiểm y tế:</label>
+                    <select class="form-control text-center" name="SelectedBHYTDuration" id="SelectedBHYTDuration">
+                        <option value="null">---Chọn thời hạn---</option>
+                        <option value="3">3 tháng</option>
+                        <option value="6">6 tháng</option>
+                        <option value="12" selected>12 tháng</option>
+                        <option value="15">15 tháng</option>
+                        <option value="60">5 năm</option>
+                    </select>
+                </div>
+                <div class="form-group" id="BHTNDurationDiv" style="display: none;">
+                    <label for="Duration">Thời hạn bảo hiểm tai nạn:</label>
+                    <select class="form-control text-center" name="SelectedBHTNDuration" id="SelectedBHTNDuration">
+                        <option value="null">---Chọn thời hạn---</option>
+                        <option value="3">3 tháng</option>
+                        <option value="6">6 tháng</option>
+                        <option value="12" selected>12 tháng</option>
+                        <option value="15">15 tháng</option>
+                        <option value="60">5 năm</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <button type="submit" id="btnPay" class="btn btn-primary mt-5" style="padding:15px">Thanh toán</button>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin:auto">
+            <div class="col-md-6">
+                <label>Bệnh viện đăng ký:</label>
+                <input type="text" class="form-control" name="SelectedHospital" placeholder="Vui lòng chỉ điền tên bệnh viện..." />
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" data-toggle="collapse" data-target="#Filter">
+                <div class="row" style="margin:auto">
+                    <div class="col-md-8">
+                        <p class="panel-title" style="color:black">
+                            Tìm kiếm học sinh
+                        </p>
+                    </div>
+                    <div class="col pull-right">
+                        <i class="bi bi-filter"></i>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row panel-body panel-collapse collapse" id="Filter" style="margin:auto">
+                <div class="col-md-3">
+                    <label for="NamHocDropdown">Năm học:</label>
+                    @Html.DropDownList("NamHoc", ViewData["NamHoc"] as SelectList, "---Chọn năm học---", new { @class = "form-control text-center", @id = "NamHocDropdown" })
+                </div>
+
+                <div class="col-md-3">
+                    <label for="KhoaDropdown">Khoa:</label>
+                    @Html.DropDownList("Khoa_ID", ViewData["Khoa"] as SelectList, "---Chọn Khoa---", new { @class = "form-control text-center", @id = "KhoaDropdown" })
+                </div>
+                <div class="col-md-3">
+                    <label for="LopDropdown">Lớp:</label>
+                    @Html.DropDownList("Lop_ID", ViewData["Lop"] as SelectList, "---Chọn Lớp---", new { @class = "form-control text-center", @id = "LopDropdown" })
+                </div>
+                <div class="col-md-3" style=" display: flex; align-items: flex-end;">
+                    <a class="btn btn-primary" id="filterLink" style="padding:10px; border-radius:5px; margin-top:15px">Lọc</a>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <div class="table-responsive mt-5">
+                <table id="myTable" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>MSSV</th>
+                            <th>Họ và tên lót</th>
+                            <th>Tên</th>
+                            <th>Lớp</th>
+                            <th>Ngày sinh</th>
+                            <th data-orderable="false"><input type="checkbox" id="checkAll"/></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var student in Model)
+                        {
+                            <tr class="text-center">
+                                <td>@student.MaSV</td>
+                                <td>@student.HoSV</td>
+                                <td>@student.TenSV</td>
+                                <td>@student.Lop.TenLop</td>
+                                <td>@Convert.ToDateTime(student.NgaySinh).ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <input type="checkbox" name="SelectedStudents" id="child" value="@student.ID" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var selectedInsurance = document.getElementById("SelectedInsurance");
+        var bhtnDurationDiv = document.getElementById("BHTNDurationDiv");
+        var bhytDurationDiv = document.getElementById("BHYTDurationDiv");
+
+        selectedInsurance.addEventListener("change", function () {
+            if (selectedInsurance.value === "bhtn") {
+                bhytDurationDiv.style.display = "none";
+                bhtnDurationDiv.style.display = "block";
+            }
+            else if (selectedInsurance.value === "bhyt") {
+                bhytDurationDiv.style.display = "block";
+                bhtnDurationDiv.style.display = "none";
+            }
+            else if (selectedInsurance.value === "both") {
+                bhytDurationDiv.style.display = "block";
+                bhtnDurationDiv.style.display = "block";
+            }
+            else {
+                bhytDurationDiv.style.display = "none";
+                bhtnDurationDiv.style.display = "none";
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        // Kiểm tra trạng thái của checkbox khi tài liệu được tải hoàn toàn
+        checkCheckboxState();
+
+        // Bắt sự kiện khi có thay đổi trong checkbox
+        $('input[name="SelectedStudents"]').change(function () {
+            // Kiểm tra xem có ít nhất một checkbox nào được chọn không
+            checkCheckboxState();
+        });
+
+        $('#checkAll').click(function () {
+            $('input[name="SelectedStudents"]').prop('checked', this.checked);
+            // Kiểm tra xem có ít nhất một checkbox nào được chọn không
+            checkCheckboxState();
+        });
+    });
+
+    function checkCheckboxState() {
+        var atLeastOneChecked = $('input[name="SelectedStudents"]:checked').length > 0;
+        var btnPay = $('#btnPay');
+
+        // Nếu có ít nhất một checkbox được chọn, cho phép nhấn nút "Thanh toán"; ngược lại, vô hiệu hóa nút "Thanh toán"
+        btnPay.prop('disabled', !atLeastOneChecked);
+    }
+    $(document).ready(function () {
+      $("#KhoaDropdown").change(function () {
+            var selectedKhoa = $(this).val();
+            var selectedNamHoc = $("#NamHocDropdown").val();
+
+            var dataToSend = { selectedKhoa: selectedKhoa };
+
+            // Nếu selectedNamHoc có giá trị, thêm dữ liệu năm học vào dataToSend
+            if (selectedNamHoc) {
+                dataToSend.startYear = selectedNamHoc.split('-')[0];
+                dataToSend.endYear = selectedNamHoc.split('-')[1];
+            }
+
+          $.ajax({
+              url: '@Url.Action("GetLopList_byKhoa")',
+              type: 'POST',
+              data: dataToSend,
+              success: function (data) {
+                  // Cập nhật dropdownlist cho lớp
+                  $("#LopDropdown").empty();
+                  $.each(data, function (index, item) {
+                      $("#LopDropdown").append($('<option>', {
+                          value: item.Value,
+                          text: item.Text
+                      }));
+                  });
+              }
+          });
+
+        });
+
+        $("#NamHocDropdown").change(function () {
+            var selectedKhoa = $("#KhoaDropdown").val();
+            var selectedNamHoc = $(this).val();
+
+            $.ajax({
+                url: '@Url.Action("GetLopList_byNamHoc")',
+                type: 'POST',
+                data: { startYear: selectedNamHoc.split('-')[0], endYear: selectedNamHoc.split('-')[1], selectedKhoa: selectedKhoa },
+                success: function (data) {
+                    // Cập nhật dropdownlist cho lớp
+                    $("#LopDropdown").empty();
+                    $.each(data, function (index, item) {
+                        $("#LopDropdown").append($('<option>', {
+                            value: item.Value,
+                            text: item.Text
+                        }));
+                    });
+                }
+            });
+        });
+    })
+           $(document).ready(function () {
+        $("#filterLink").click(function () {
+            var selectedKhoa = $("#KhoaDropdown").val();
+            var selectedNamHoc = $("#NamHocDropdown").val();
+            var selectedLop = $("#LopDropdown").val();
+            
+            var url = '@Url.Action("Index")' + '?Khoa_ID=' + selectedKhoa + '&NamHoc=' + selectedNamHoc + '&Lop_ID=' + selectedLop;
+
+            window.location.href = url;
+        });
+    });
+</script>
